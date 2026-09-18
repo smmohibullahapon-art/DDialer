@@ -1,0 +1,1 @@
+{"name":"@ddialer/database","version":"1.0.0","main":"index.ts","devDependencies":{"prisma":"^5.14.0"},"dependencies":{"@prisma/client":"^5.14.0"}}

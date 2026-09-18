@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 232 47% 5%;
+    --foreground: 216 19% 60%;
+  }
+
+  body {
+    background-color: #070913;
+    color: #8a99ad;
+    font-family: var(--font-inter), sans-serif;
+    overflow-x: hidden;
+  }
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #0b0f19;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #1f293d;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #00d2ff;
+}
+
+/* Futuristic Animations & Glow Effects */
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(0, 210, 255, 0.15), inset 0 0 15px rgba(0, 210, 255, 0.05);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.3), inset 0 0 25px rgba(0, 255, 136, 0.1);
+  }
+}
+
+@keyframes floatNode {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes waveScan {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes radarSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 4s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: floatNode 5s ease-in-out infinite;
+}
+
+.animate-radar {
+  animation: radarSpin 10s linear infinite;
+}
+
+/* Glassmorphism & Neon Utilities */
+.glass-panel {
+  background: rgba(11, 15, 25, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 136, 0.08);
+}
+
+.neon-border-cyan {
+  border-color: rgba(0, 210, 255, 0.4);
+  box-shadow: 0 0 20px rgba(0, 210, 255, 0.15);
+}
+
+.neon-border-emerald {
+  border-color: rgba(0, 255, 136, 0.4);
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.15);
+}
+
+/* Telecom Grid Background */
+.telecom-grid-bg {
+  background-image: linear-gradient(to right, rgba(31, 41, 61, 0.1) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(31, 41, 61, 0.1) 1px, transparent 1px);
+  background-size: 3rem 3rem;
+}

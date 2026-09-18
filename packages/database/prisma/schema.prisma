@@ -1,0 +1,120 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  SUPER_ADMIN
+  RESELLER_ADMIN
+  TENANT_ADMIN
+  AGENT
+  USER
+}
+
+enum TenantStatus {
+  ACTIVE
+  SUSPENDED
+  PENDING_VERIFICATION
+}
+
+model Tenant {
+  id            String         @id @default(uuid())
+  name          String
+  slug          String         @unique
+  status        TenantStatus   @default(ACTIVE)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  users         User[]
+  wallet        Wallet?
+  dids          DIDNumber[]
+  sipAccounts   SIPAccount[]
+  cdrs          CallDetailRecord[]
+
+  @@index([slug])
+}
+
+model User {
+  id            String         @id @default(uuid())
+  tenantId      String
+  tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  email         String         @unique
+  passwordHash  String
+  fullName      String
+  role          Role           @default(USER)
+  isActive      Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+
+  @@index([tenantId, email])
+}
+
+model Wallet {
+  id            String         @id @default(uuid())
+  tenantId      String         @unique
+  tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  balance       Decimal        @default(0.0000) @db.Decimal(12, 4)
+  currency      String         @default("BDT")
+  creditLimit   Decimal        @default(0.0000) @db.Decimal(12, 4)
+  updatedAt     DateTime       @updatedAt
+  transactions  Transaction[]
+}
+
+model Transaction {
+  id            String         @id @default(uuid())
+  walletId      String
+  wallet        Wallet         @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  amount        Decimal        @db.Decimal(12, 4)
+  type          String
+  referenceId   String?
+  balanceBefore Decimal        @db.Decimal(12, 4)
+  balanceAfter  Decimal        @db.Decimal(12, 4)
+  createdAt     DateTime       @default(now())
+
+  @@index([walletId, createdAt])
+}
+
+model DIDNumber {
+  id            String         @id @default(uuid())
+  tenantId      String?
+  tenant        Tenant?        @relation(fields: [tenantId], references: [id])
+  number        String         @unique
+  countryCode   String         @default("880")
+  type          String
+  providerId    String
+  monthlyRate   Decimal        @db.Decimal(10, 2)
+  status        String         @default("AVAILABLE")
+  assignedAt    DateTime?
+}
+
+model SIPAccount {
+  id            String         @id @default(uuid())
+  tenantId      String
+  tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  username      String         @unique
+  secret        String
+  callerId      String?
+  maxChannels   Int            @default(2)
+  isActive      Boolean        @default(true)
+}
+
+model CallDetailRecord {
+  id            String         @id @default(uuid())
+  tenantId      String
+  tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  callSessionId String         @unique
+  caller        String
+  callee        String
+  durationSec   Int            @default(0)
+  billSec       Int            @default(0)
+  providerCost  Decimal        @db.Decimal(10, 4)
+  customerCost  Decimal        @db.Decimal(10, 4)
+  status        String
+  startedAt     DateTime
+  endedAt       DateTime?
+
+  @@index([tenantId, startedAt])
+}
